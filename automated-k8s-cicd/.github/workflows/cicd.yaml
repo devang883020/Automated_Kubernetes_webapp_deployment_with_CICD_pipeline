@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Kubernetes Deployment
+name: CI/CD Pipeline - AWS EKS with ALB
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
       - main
 
 env:
+  AWS_REGION: ap-south-1
+  CLUSTER_NAME: my-eks-cluster
   IMAGE_NAME: myapp
-  REGISTRY: docker.io
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
 jobs:
@@ -15,46 +16,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Login to Docker Hub
+      # Docker login
       - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
             -u $DOCKER_USERNAME --password-stdin
 
-      # 3️⃣ Build Docker Image
+      # Build image
       - name: Build Docker image
         run: |
           docker build -t $DOCKER_USERNAME/$IMAGE_NAME:${{ github.sha }} .
 
-      # 4️⃣ Push Docker Image
+      # Push image
       - name: Push Docker image
         run: |
           docker push $DOCKER_USERNAME/$IMAGE_NAME:${{ github.sha }}
 
-      # 5️⃣ Setup kubectl
-      - name: Setup kubectl
+      # AWS auth
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: $AWS_REGION
+
+      # kubectl
+      - name: Install kubectl
         uses: azure/setup-kubectl@v4
         with:
           version: v1.29.0
 
-      # 6️⃣ Setup Helm
-      - name: Setup Helm
+      # Helm
+      - name: Install Helm
         uses: azure/setup-helm@v4
         with:
           version: v3.14.0
 
-      # 7️⃣ Configure Kubernetes access
-      - name: Configure kubeconfig
+      # kubeconfig
+      - name: Update kubeconfig
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          aws eks update-kubeconfig \
+            --region $AWS_REGION \
+            --name $CLUSTER_NAME
 
-      # 8️⃣ Deploy to Kubernetes using Helm
-      - name: Deploy using Helm
+      # Deploy
+      - name: Deploy to EKS using Helm
         run: |
           helm upgrade --install myapp helm/myapp \
             --set image.repository=$DOCKER_USERNAME/$IMAGE_NAME \

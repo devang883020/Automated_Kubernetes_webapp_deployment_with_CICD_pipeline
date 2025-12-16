@@ -1,0 +1,18 @@
+replicaCount: 2
+
+image:
+  repository: devang/myapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: true
+  host: myapp.example.com
+  alb:
+    scheme: internet-facing
+    targetType: ip
+    path: /
