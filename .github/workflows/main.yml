@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - "app/main.py"
-      - "Dockerfile"
+      - "automated-k8s-cicd/app/main.py"
+      - "automated-k8s-cicd/Dockerfile"
 
 env:
   AWS_REGION: ap-south-1
@@ -54,7 +54,10 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:${{ steps.versioning.outputs.version }} .
+          docker build \
+               -t $IMAGE_NAME:${{ steps.versioning.outputs.version }} \
+          automated-k8s-cicd
+
 
       # Push Docker image
       - name: Push Docker image
@@ -91,6 +94,6 @@ jobs:
       # Deploy using Helm
       - name: Deploy to EKS
         run: |
-          helm upgrade --install webapp helm/myapp \
+          helm upgrade --install webapp automated-k8s-cicd/helm/myapp \
             --set image.repository=$IMAGE_NAME \
             --set image.tag=${{ steps.versioning.outputs.version }}
