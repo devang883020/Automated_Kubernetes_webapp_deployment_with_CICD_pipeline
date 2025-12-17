@@ -1,4 +1,6 @@
 name: CI/CD Pipeline - AWS EKS with Versioned Docker Images
+permissions:
+  contents: write
 
 on:
   push:
