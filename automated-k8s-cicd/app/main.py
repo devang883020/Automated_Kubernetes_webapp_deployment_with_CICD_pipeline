@@ -3,7 +3,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Hello from Jenkins CI/CD on EKS! with webhook github and CI with github action and see you there"
+    return "Hello from Jenkins CI/CD on EKS! with webhook github and CI with github action and see you there lets go"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
