@@ -5,14 +5,14 @@ metadata:
   name: {{ .Release.Name }}
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: {{ .Values.ingress.alb.scheme }}
-    alb.ingress.kubernetes.io/target-type: {{ .Values.ingress.alb.targetType }}
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
     - http:
         paths:
-          - path: {{ .Values.ingress.alb.path }}
+          - path: /
             pathType: Prefix
             backend:
               service:
