@@ -33,3 +33,19 @@ Versioning images automatically
 Deploying consistently using Helm
 
 Exposing the app via AWS ALB Ingress
+
+# ⚙️ CI/CD Pipeline Flow
+
+Triggered on push to main branch
+
+Builds Docker image using Dockerfile
+
+Tags image using VERSION file
+
+Pushes image to Docker Hub
+
+Authenticates to AWS
+
+Updates kubeconfig for EKS
+
+Deploys application using Helm
