@@ -1,5 +1,6 @@
-#Automated Kubernetes Web App Deployment with CI/CD
-#📌 Project Overview
+# Automated Kubernetes Web App Deployment with CI/CD
+
+# 📌 Project Overview
 
 This project demonstrates a production-style CI/CD pipeline that automatically builds, versions, and deploys a containerized web application to AWS EKS using GitHub Actions, Docker, Helm, and AWS ALB Ingress.
 
@@ -13,7 +14,7 @@ Expose applications securely using AWS ALB
 
 Debug real production issues (Ingress, IAM, 502 errors, etc.)
 
-#🧠 What This Project Solves
+# 🧠 What This Project Solves
 
 Manual Kubernetes deployments are:
 
